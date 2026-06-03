@@ -1,0 +1,41 @@
+services:
+  #node
+  frontend:
+    build: ./xwzx-news
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./xwzx-news:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev -- --host 0.0.0.0
+
+  #backend
+  backend:
+    build: ./toutiao_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./toutiao_app:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: toutiao
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mysql_data:
